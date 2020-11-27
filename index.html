@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>にゃんぱすーグラフ</title>
+  </head>
+  <body>
+    <canvas id="myChart"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <script>
+      function drawChart(data) {
+        let ctx = document.getElementById('myChart').getContext('2d');
+        let chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            datasets: [
+              {
+                label: 'にゃんぱすーグラフ',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                fill: false,
+                data: data,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              xAxes: [
+                {
+                  type: 'time',
+                  time: {
+                    unit: 'day',
+                  },
+                },
+              ],
+            },
+          },
+        });
+      }
+
+      let req = new Request('/nyanpass_count.jsonl');
+      fetch(req).then((res) => {
+        res.text().then((text) => {
+          let jsonTextLines = text.trim().split('\n');
+          let data = jsonTextLines.map((line) => {
+            let parsedLine = JSON.parse(line);
+            let time = parsedLine.time;
+            let count = parsedLine.count - 0;
+            return { x: time, y: count };
+          });
+          console.log(data);
+          drawChart(data);
+        });
+      });
+    </script>
+  </body>
+</html>
