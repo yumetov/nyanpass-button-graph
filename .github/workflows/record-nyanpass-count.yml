@@ -1,0 +1,29 @@
+on:
+  schedule:
+    - cron: '0 * * * *'
+jobs:
+  record-nyanpass-count:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: checkout main
+        uses: actions/checkout@v2
+      - name: append current count
+        env:
+          GET_COUNT_URL: ${{ secrets.GET_COUNT_URL}}
+        run: |
+          curl ${GET_COUNT_URL} >> nyanpass_count.jsonl
+      - name: set git config
+        env:
+          GITHUB_DUMMY_USERNAME: Nyanpass Recorder
+          GITHUB_DUMMY_EMAIL: nyanpass@example.com
+        run: |
+          git config --local user.name "${GITHUB_DUMMY_USERNAME}"
+          git config --local user.email "${GITHUB_DUMMY_EMAIL}"
+      - name: commit
+        run: |
+          git add nyanpass_count.jsonl
+          git commit -m "append current count"
+      - name: push
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
