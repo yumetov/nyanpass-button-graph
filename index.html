@@ -40,7 +40,7 @@
         });
       }
 
-      let req = new Request('/nyanpass_count.jsonl');
+      let req = new Request('./nyanpass_count.jsonl');
       fetch(req).then((res) => {
         res.text().then((text) => {
           let jsonTextLines = text.trim().split('\n');
