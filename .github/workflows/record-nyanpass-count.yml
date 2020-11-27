@@ -12,7 +12,7 @@ jobs:
         env:
           GET_COUNT_URL: ${{ secrets.GET_COUNT_URL}}
         run: |
-          curl ${GET_COUNT_URL} >> nyanpass_count.jsonl
+          curl ${GET_COUNT_URL} | awk "{print $0 '\n' }" >> nyanpass_count.jsonl
       - name: set git config
         env:
           GITHUB_DUMMY_USERNAME: Nyanpass Recorder
