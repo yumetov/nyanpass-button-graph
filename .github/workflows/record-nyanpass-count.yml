@@ -1,7 +1,7 @@
 name: record-nyanpass-count
 on:
   schedule:
-    - cron: '* * * * *'
+    - cron: '*/5 * * * *'
 jobs:
   record-nyanpass-count:
     runs-on: ubuntu-18.04
