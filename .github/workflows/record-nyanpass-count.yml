@@ -1,3 +1,4 @@
+name: record-nyanpass-count
 on:
   schedule:
     - cron: '* * * * *'
