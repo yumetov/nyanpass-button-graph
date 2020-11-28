@@ -3,13 +3,38 @@
   <head>
     <meta charset="utf-8" />
     <title>にゃんぱすーグラフ</title>
+    <style>
+      #wrapper {
+        position: relative;
+        width: calc(100% - 40px);
+        height: 600px;
+        overflow: hidden;
+        margin: 20px;
+      }
+    </style>
   </head>
   <body>
-    <canvas id="myChart"></canvas>
+    <div>
+      <h1>にゃんぱすーグラフ</h1>
+      <p>
+        <a href="https://nyanpass.com/" target="_blank" rel="noopenner"
+          >にゃんぱすーボタン</a
+        >の押された回数をAPIで取得してグラフ化しています。
+      </p>
+    </div>
+    <div id="wrapper">
+      <canvas id="myChart"></canvas>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
     <script>
+      function setCanvasSize() {
+        let wrapper = document.getElementById('wrapper');
+        let ctx = document.getElementById('myChart');
+        ctx.width = wrapper.offsetWidth;
+        ctx.height = 600;
+      }
       function drawChart(data) {
         let ctx = document.getElementById('myChart').getContext('2d');
         let chart = new Chart(ctx, {
@@ -37,23 +62,30 @@
                 },
               ],
             },
+            responsive: true,
+            maintainAspectRatio: false,
           },
         });
       }
 
-      let req = new Request('./nyanpass_count.jsonl');
-      fetch(req).then((res) => {
-        res.text().then((text) => {
-          let jsonTextLines = text.trim().split('\n');
-          let data = jsonTextLines.map((line) => {
-            let parsedLine = JSON.parse(line);
-            let time = parsedLine.time;
-            let count = parsedLine.count - 0;
-            return { x: time, y: count };
+      function updateChart() {
+        let req = new Request('./nyanpass_count.jsonl');
+        fetch(req).then((res) => {
+          res.text().then((text) => {
+            let jsonTextLines = text.trim().split('\n');
+            let data = jsonTextLines.map((line) => {
+              let parsedLine = JSON.parse(line);
+              let time = parsedLine.time;
+              let count = parsedLine.count - 0;
+              return { x: time, y: count };
+            });
+            drawChart(data);
           });
-          drawChart(data);
         });
-      });
+      }
+
+      setCanvasSize();
+      updateChart();
     </script>
   </body>
 </html>
